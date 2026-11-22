@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices | Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app">
+    <main class="content">
+        <h1>Invoices</h1>
+        <p class="subtitle">Create and manage customer invoices.</p>
+
+        <section class="section">
+            <h2>Create Invoice</h2>
+
+            <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Customer Name</label>
+                <input type="text" name="customer_name" required>
+
+                <label>Select Product</label>
+                <select name="product_id" required>
+                    {% for product in products %}
+                    <option value="{{ product['id'] }}">
+                        {{ product['name'] }} - Stock: {{ product['quantity'] }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <label>Quantity</label>
+                <input type="number" name="quantity" min="1" required>
+
+                <button type="submit">Create Invoice</button>
+            </form>
+        </section>
+
+        <section class="section">
+            <h2>Invoice History</h2>
+
+            {% if invoices %}
+            <table>
+                <tr>
+                    <th>Invoice Number</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+
+                {% for invoice in invoices %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('invoice_details', invoice_id=invoice['id']) }}">
+                            {{ invoice['invoice_number'] }}
+                        </a>
+                    </td>
+
+                    <td>{{ invoice['customer_name'] }}</td>
+
+                    <td>₦{{ "%.2f"|format(invoice['total_amount']) }}</td>
+
+                    <td>{{ invoice['payment_status'] }}</td>
+
+                    <td>{{ invoice['created_at'] }}</td>
+
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('change_invoice_status', invoice_id=invoice['id']) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <select name="status" required>
+                                <option value="Paid"
+                                    {% if invoice['payment_status'] == 'Paid' %}selected{% endif %}>
+                                    Paid
+                                </option>
+
+                                <option value="Unpaid"
+                                    {% if invoice['payment_status'] == 'Unpaid' %}selected{% endif %}>
+                                    Unpaid
+                                </option>
+                            </select>
+
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No invoices created yet.</p>
+            {% endif %}
+        </section>
+
+        <p><a href="/">Back to Dashboard</a></p>
+    </main>
+</div>
+</body>
+</html>

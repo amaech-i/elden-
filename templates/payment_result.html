@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Result - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Payment Result</h1>
+
+        {% if success %}
+            <h2>Payment Successful</h2>
+            <p>Your payment has been verified successfully.</p>
+            <p>Your Elden subscription has been activated.</p>
+        {% else %}
+            <h2>Payment Not Confirmed</h2>
+            <p>{{ message }}</p>
+            <p>Your subscription has not been activated by this payment.</p>
+        {% endif %}
+
+        {% if payment_reference %}
+            <p><strong>Payment reference:</strong> {{ payment_reference }}</p>
+        {% endif %}
+
+        <p>
+            <a href="{{ url_for('subscription_page') }}">
+                View subscription details
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('plans_page') }}">
+                View subscription plans
+            </a>
+        </p>
+    </main>
+</body>
+</html>

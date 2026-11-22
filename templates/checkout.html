@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Checkout - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Elden Test Checkout</h1>
+
+        <p>This is a development-only payment simulator. No real money will be charged.</p>
+
+        <section class="card">
+            <h2>{{ payment.plan_name }}</h2>
+
+            <p>
+                Amount:
+                {{ payment.currency }} {{ payment.amount }}
+            </p>
+
+            <p>
+                Billing cycle:
+                {{ payment.billing_cycle }}
+            </p>
+
+            <p>
+                Payment reference:
+                {{ payment.payment_reference }}
+            </p>
+
+            <p>
+                Payment status:
+                {{ payment.status }}
+            </p>
+
+            {% if payment.status == "pending" %}
+                <form method="POST" action="{{ url_for('complete_test_payment', payment_reference=payment.payment_reference) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">Simulate Successful Payment</button>
+                </form>
+            {% endif %}
+        </section>
+
+        <p>
+            <a href="{{ url_for('plans_page') }}">Back to plans</a>
+        </p>
+    </main>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elden | Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="logo">ELDEN</div>
+        <nav>
+            <a href="/">🏠 Overview</a>
+            <a href="/inventory" class="active">📦 Inventory</a>
+            <a href="#">💰 Sales</a>
+            <a href="#">🧾 Invoices</a>
+            <a href="#">💳 Expenses</a>
+            <a href="#">👥 Customers</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <div class="topbar">
+            <div>
+                <h1>Inventory</h1>
+                <p class="subtitle">Manage your business products and stock.</p>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2>Add New Product</h2>
+            <form method="POST" action="/inventory/add">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Product name</label>
+                <input type="text" name="name" placeholder="Enter product name" required>
+
+                <label>Selling price (₦)</label>
+                <input type="number" name="selling_price" min="0" step="0.01" required>
+
+                <label>Cost price (₦)</label>
+                <input type="number" name="cost_price" min="0" step="0.01" required>
+
+                <label>Quantity</label>
+                <input type="number" name="quantity" min="0" step="1" required>
+
+                <button type="submit">Add Product</button>
+            </form>
+        </section>
+
+        <section class="section">
+            <h2>Low Stock Alerts</h2>
+            {% if low_stock_products %}
+                {% for product in low_stock_products %}
+                    <p style="color: #b45309; padding: 8px 0;">
+                        ⚠️ {{ product['name'] }} has only {{ product['quantity'] }} units remaining.
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>All products have sufficient stock.</p>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2>Your Products</h2>
+
+            {% if products %}
+            <div style="overflow-x:auto;">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Selling Price</th>
+                        <th>Cost Price</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product['name'] }}</td>
+                        <td>₦{{ "%.2f"|format(product['selling_price']) }}</td>
+                        <td>₦{{ "%.2f"|format(product['cost_price']) }}</td>
+                        <td>{{ product['quantity'] }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_inventory_product', product_id=product['id']) }}">Edit</a>
+
+                            <form method="POST"
+                                  action="{{ url_for('delete_inventory_product', product_id=product['id']) }}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Delete this product?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="delete-button">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+            <p>No products added yet.</p>
+            {% endif %}
+        </section>
+    </main>
+</div>
+</body>
+</html>

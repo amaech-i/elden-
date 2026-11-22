@@ -1,0 +1,32 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite3
+
+# Backup and temporary files
+*_backup.py
+*_backup*.py
+*.backup
+*.bak
+*.before-*
+*.phase*-backup
+*.recovery-copy
+*.damaged-*
+*.pyo
+*~
+*.log
+*.db.*
+
+# Accidental duplicate filenames
+app.py *
+payments.py *
+migrate_to_postgres.py *
+
+# Recovery copy
+database_rebuilt.py
+
+templates/subscription.html?*

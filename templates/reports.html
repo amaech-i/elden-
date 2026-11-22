@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elden - Business Reports</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Business Reports</h1>
+    <p>Track your business performance.</p>
+
+    <h2>Daily Sales</h2>
+    <div class="card">
+        <p>Total Sales: ₦{{ daily.total_sales }}</p>
+        <p>Transactions: {{ daily.transactions }}</p>
+        <p>Products Sold: {{ daily.products_sold }}</p>
+    </div>
+
+    <h2>Weekly Sales</h2>
+    <div class="card">
+        <p>Total Sales: ₦{{ weekly.total_sales }}</p>
+        <p>Transactions: {{ weekly.transactions }}</p>
+        <p>Products Sold: {{ weekly.products_sold }}</p>
+    </div>
+
+    <h2>Monthly Sales</h2>
+    <div class="card">
+        <p>Total Sales: ₦{{ monthly.total_sales }}</p>
+        <p>Transactions: {{ monthly.transactions }}</p>
+        <p>Products Sold: {{ monthly.products_sold }}</p>
+    </div>
+
+    <h2>Weekly Expenses</h2>
+    <div class="card">
+        <p>Total Expenses: ₦{{ expenses.total_expenses }}</p>
+        <p>Transactions: {{ expenses.transactions }}</p>
+    </div>
+
+    <h2>Weekly Profit</h2>
+    <div class="card">
+        <p>Revenue: ₦{{ profit.revenue }}</p>
+        <p>Cost of Goods Sold: ₦{{ profit.cost_of_goods_sold }}</p>
+        <p>Gross Profit: ₦{{ profit.gross_profit }}</p>
+        <p>Expenses: ₦{{ profit.expenses }}</p>
+        <p>Net Profit: ₦{{ profit.net_profit }}</p>
+    </div>
+
+    <h2>Best-Selling Products</h2>
+
+    {% if best_sellers %}
+        {% for product in best_sellers %}
+            <div class="card">
+                <h3>{{ product.product_name }}</h3>
+                <p>Quantity Sold: {{ product.total_quantity_sold }}</p>
+                <p>Revenue: ₦{{ product.total_revenue }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No sales recorded yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales | Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app">
+    <main class="content">
+        <h1>Sales</h1>
+        <p class="subtitle">Record and manage your business sales.</p>
+
+        <section class="section">
+            <h2>Record a Sale</h2>
+
+            <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Select Product</label>
+                <select name="product_id" required>
+                    {% for product in products %}
+                    <option value="{{ product['id'] }}">
+                        {{ product['name'] }} - Stock: {{ product['quantity'] }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <label>Quantity Sold</label>
+                <input type="number" name="quantity" min="1" required>
+
+                <button type="submit">Record Sale</button>
+            </form>
+        </section>
+
+        <section class="section">
+            <h2>Sales History</h2>
+
+            {% if sales %}
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                </tr>
+
+                {% for sale in sales %}
+                <tr>
+                    <td>{{ sale['product_name'] }}</td>
+                    <td>{{ sale['quantity'] }}</td>
+                    <td>₦{{ "%.2f"|format(sale['total_amount']) }}</td>
+                    <td>{{ sale['created_at'] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No sales recorded yet.</p>
+            {% endif %}
+        </section>
+
+        <p><a href="/inventory">Back to Inventory</a></p>
+    </main>
+</div>
+</body>
+</html>

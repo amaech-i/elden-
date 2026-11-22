@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elden Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Elden</h1>
+    <p>Your business management dashboard</p>
+</header>
+
+<main>
+    <h2>Financial Overview</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Total Sales</h3>
+            <p>₦{{ "%.2f"|format(summary.revenue) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Cost of Goods Sold</h3>
+            <p>₦{{ "%.2f"|format(summary.cost_of_goods_sold) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Gross Profit</h3>
+            <p>₦{{ "%.2f"|format(summary.gross_profit) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Expenses</h3>
+            <p>₦{{ "%.2f"|format(summary.expenses) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Net Profit</h3>
+            <p>₦{{ "%.2f"|format(summary.net_profit) }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Products</h3>
+            <p>{{ total_products }}</p>
+        </div>
+    </div>
+
+    <div class="menu">
+        <h2>Business Management</h2>
+
+        <a href="/inventory" class="menu-item">📦 Inventory Management</a>
+        <a href="/sales" class="menu-item">💰 Sales Management</a>
+        <a href="/invoices" class="menu-item">🧾 Invoices</a>
+        <a href="/expenses" class="menu-item">💳 Expenses</a>
+        <a href="/debts" class="menu-item">👥 Customer Debts</a>
+        <a href="/customers" class="menu-item">👥 Customer Management</a>
+        <a href="/reports" class="menu-item">📊 Business Reports</a>
+        <a href="/settings" class="menu-item">⚙️ Business Settings</a>
+    </div>
+    <form method="POST" action="{{ url_for('logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Log Out</button>
+    </form>
+</main>
+
+</body>
+</html>

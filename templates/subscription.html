@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Your Elden subscription</h1>
+
+        {% if subscription %}
+
+            {% if subscription.status == "trialing" and access_allowed %}
+                <h2>Free trial active</h2>
+                <p>Your Elden free trial is active.</p>
+                <p>Trial started: {{ subscription.trial_started_at }}</p>
+                <p>Trial ends: {{ subscription.trial_ends_at }}</p>
+
+            {% elif subscription.status == "active" and access_allowed %}
+                <h2>Subscription active</h2>
+                <p>Your Elden subscription is active.</p>
+                <p>Plan: {{ subscription.plan_name }}</p>
+                <p>Subscription ends: {{ subscription.current_period_end }}</p>
+
+            {% else %}
+                <h2>Subscription expired or inactive</h2>
+                <p>Your subscription does not currently allow access to Elden.</p>
+                <p>Please choose a subscription plan to continue.</p>
+                <a href="{{ url_for('plans_page') }}">View subscription plans</a>
+            {% endif %}
+
+        {% else %}
+            <h2>No subscription found</h2>
+            <p>No subscription information is available for this business.</p>
+            <a href="{{ url_for('plans_page') }}">View subscription plans</a>
+        {% endif %}
+
+        <hr>
+
+        <h2>Payment history</h2>
+
+        {% if payments %}
+            {% for payment in payments %}
+                <section class="card">
+                    <p><strong>Plan:</strong> {{ payment.plan_name }}</p>
+                    <p><strong>Amount:</strong> {{ payment.currency }} {{ payment.amount }}</p>
+                    <p><strong>Status:</strong> {{ payment.status }}</p>
+                    <p><strong>Provider:</strong> {{ payment.provider }}</p>
+                    <p><strong>Date:</strong> {{ payment.created_at }}</p>
+                    <p><strong>Reference:</strong> {{ payment.payment_reference }}</p>
+
+                    {% if payment.verified_at %}
+                        <p><strong>Verified:</strong> {{ payment.verified_at }}</p>
+                    {% endif %}
+                </section>
+            {% endfor %}
+        {% else %}
+            <p>No payment history yet.</p>
+        {% endif %}
+
+        <hr>
+
+        <h2>Continue using Elden</h2>
+        <p>Choose a subscription plan to continue using Elden's business management features.</p>
+
+        <p>
+            <a href="{{ url_for('plans_page') }}">View available subscription plans</a>
+        </p>
+
+        <form method="POST" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Log out</button>
+        </form>
+    </main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        {% set currency_symbols = {
+            "NGN": "₦",
+            "USD": "$",
+            "GBP": "£",
+            "EUR": "€"
+        } %}
+        {% set currency_symbol = currency_symbols.get(settings.currency, settings.currency) %}
+        <h1>{{ settings.business_name }}</h1>
+
+        {% if settings.phone %}
+            <p><strong>Phone:</strong> {{ settings.phone }}</p>
+        {% endif %}
+
+        {% if settings.email %}
+            <p><strong>Email:</strong> {{ settings.email }}</p>
+        {% endif %}
+
+        {% if settings.address %}
+            <p><strong>Address:</strong> {{ settings.address }}</p>
+        {% endif %}
+
+        <button type="button" onclick="window.print()">Print Invoice</button>
+
+        <h2>Invoice Details</h2>
+
+        <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+        <p><strong>Customer:</strong> {{ invoice.customer_name }}</p>
+        <p><strong>Payment Status:</strong> {{ invoice.payment_status }}</p>
+        <p><strong>Date:</strong> {{ invoice.created_at }}</p>
+
+        <h2>Items</h2>
+
+        {% for item in items %}
+            <p>{{ item.product_name }} — {{ item.quantity }} × {{ currency_symbol }}{{ "%.2f"|format(item.unit_price) }} = {{ currency_symbol }}{{ "%.2f"|format(item.line_total) }}</p>
+        {% endfor %}
+
+        <h2>Financial Summary</h2>
+
+        <p><strong>Invoice Total:</strong> {{ currency_symbol }}{{ "%.2f"|format(invoice.total_amount) }}</p>
+        <p><strong>Amount Paid:</strong> {{ currency_symbol }}{{ "%.2f"|format(invoice.total_amount - balance) }}</p>
+        <p><strong>Outstanding Balance:</strong> {{ currency_symbol }}{{ "%.2f"|format(balance) }}</p>
+
+        <h2>Record a Payment</h2>
+
+        {% if balance > 0 %}
+        <form method="POST" action="{{ url_for('record_invoice_payment', invoice_id=invoice.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Payment Amount ({{ currency_symbol }})</label>
+            <input type="number" name="amount" min="0.01" max="{{ balance }}" step="0.01" required>
+
+            <label>Payment Method</label>
+            <select name="payment_method" required>
+                <option value="">Choose payment method</option>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="POS">POS</option>
+            </select>
+
+            <label>Payment Reference (Optional)</label>
+            <input type="text" name="reference">
+
+            <button type="submit">Record Payment</button>
+        </form>
+        {% else %}
+        <p>This invoice is fully paid.</p>
+        {% endif %}
+
+        <h2>Payment History</h2>
+
+        {% if payments %}
+            {% for payment in payments %}
+                <div class="card">
+                    <p><strong>Amount:</strong> {{ currency_symbol }}{{ "%.2f"|format(payment.amount) }}</p>
+                    <p><strong>Method:</strong> {{ payment.payment_method }}</p>
+                    <p><strong>Reference:</strong> {{ payment.reference or "N/A" }}</p>
+                    <p><strong>Date:</strong> {{ payment.created_at }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No payments recorded yet.</p>
+        {% endif %}
+
+        <a href="{{ url_for('invoices_page') }}">Back to Invoices</a>
+    </main>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Customer - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Elden</h1>
+    <p>Edit Customer Information</p>
+</header>
+
+<main>
+    <h2>Update Customer</h2>
+
+    <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input
+            type="text"
+            name="name"
+            value="{{ customer.name }}"
+            placeholder="Customer Name"
+            required
+        >
+
+        <input
+            type="tel"
+            name="phone"
+            value="{{ customer.phone or '' }}"
+            placeholder="Phone Number"
+        >
+
+        <input
+            type="email"
+            name="email"
+            value="{{ customer.email or '' }}"
+            placeholder="Email Address"
+        >
+
+        <input
+            type="text"
+            name="address"
+            value="{{ customer.address or '' }}"
+            placeholder="Address"
+        >
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p><a href="/customers">Back to Customers</a></p>
+</main>
+
+</body>
+</html>

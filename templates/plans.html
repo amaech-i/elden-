@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Plans - Elden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Elden Subscription Plans</h1>
+
+        <p>Choose a subscription plan for your business.</p>
+
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+
+        {% if plans %}
+            {% for plan in plans %}
+                <section class="card">
+                    <h2>{{ plan.plan_name }}</h2>
+
+                    <p>
+                        Price:
+                        {{ plan.currency }} {{ plan.price }}
+                    </p>
+
+                    <p>
+                        Billing cycle:
+                        {{ plan.billing_cycle }}
+                    </p>
+
+                    <p>
+                        Duration:
+                        {{ plan.duration_days }} days
+                    </p>
+
+                    <h3>Paystack checkout</h3>
+
+                    <form method="POST" action="{{ url_for('paystack_checkout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="plan_code" value="{{ plan.plan_code }}">
+                        <button type="submit">Continue to Paystack</button>
+                    </form>
+
+                    <h3>Development testing</h3>
+
+                    <form method="POST" action="{{ url_for('select_plan') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="plan_code" value="{{ plan.plan_code }}">
+                        <button type="submit">Use Test Payment Simulator</button>
+                    </form>
+                </section>
+            {% endfor %}
+        {% else %}
+            <p>No subscription plans are available yet.</p>
+        {% endif %}
+
+        <p>
+            <a href="{{ url_for('subscription_page') }}">Back to subscription</a>
+        </p>
+
+        <form method="POST" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Log out</button>
+        </form>
+    </main>
+</body>
+</html>
